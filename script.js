@@ -5,6 +5,8 @@ import {
   getDatabase,
   ref,
   push,
+  onValue,
+  remove,
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -21,13 +23,6 @@ const inputBtn = document.getElementById("input-btn");
 const ulEl = document.getElementById("ul-el");
 const deleteBtn = document.querySelector("#delete-btn");
 
-deleteBtn.addEventListener("dblclick", () => {});
-
-inputBtn.addEventListener("click", function () {
-  push(referenceInDB, inputEl.value);
-  inputEl.value = "";
-});
-
 function render(leads) {
   ulEl.innerHTML = "";
   for (let i = 0; i < leads.length; i++) {
@@ -39,3 +34,21 @@ function render(leads) {
       "</a></li>";
   }
 }
+
+onValue(referenceInDB, function (snapshot) {
+  if (snapshot.exists()) {
+    const snapshotValues = snapshot.val();
+    const leads = Object.values(snapshotValues);
+    render(leads);
+  }
+});
+
+inputBtn.addEventListener("click", function () {
+  push(referenceInDB, inputEl.value);
+  inputEl.value = "";
+});
+
+deleteBtn.addEventListener("dblclick", () => {
+  remove(referenceInDB);
+  ulEl.innerHTML = "";
+});
