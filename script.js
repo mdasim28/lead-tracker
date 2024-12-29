@@ -1,35 +1,31 @@
 "use strict";
 
-let myLeads = [];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  push,
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+const firebaseConfig = {
+  databaseURL:
+    "https://leads-tracker-27c4a-default-rtdb.asia-southeast1.firebasedatabase.app/",
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const referenceInDB = ref(database, "Leads");
+
 const inputEl = document.getElementById("input-el");
 const inputBtn = document.getElementById("input-btn");
 const ulEl = document.getElementById("ul-el");
 const deleteBtn = document.querySelector("#delete-btn");
-const tabBtn = document.querySelector("#tab-btn");
-const leadsFromLocalStorage = JSON.parse(localStorage.getItem("myLeads"));
 
-if (leadsFromLocalStorage) {
-  myLeads = leadsFromLocalStorage;
-  render(myLeads);
-}
-
-tabBtn.addEventListener("click", () => {
-  myLeads.push(window.location.href);
-  localStorage.setItem("myLeads", JSON.stringify(myLeads));
-  render(myLeads);
-});
-
-deleteBtn.addEventListener("dblclick", () => {
-  localStorage.clear();
-  myLeads = [];
-  render(myLeads);
-});
+deleteBtn.addEventListener("dblclick", () => {});
 
 inputBtn.addEventListener("click", function () {
-  myLeads.push(inputEl.value);
+  push(referenceInDB, inputEl.value);
   inputEl.value = "";
-  localStorage.setItem("myLeads", JSON.stringify(myLeads));
-  render(myLeads);
 });
 
 function render(leads) {
